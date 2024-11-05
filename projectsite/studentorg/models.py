@@ -1,6 +1,5 @@
 from django.db import models
 
-
 class BaseModel(models.Model):
     """Abstract base model with created and updated timestamps."""
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)

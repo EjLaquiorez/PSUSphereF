@@ -3,7 +3,7 @@ from .models import College, Program, Organization, Student, OrgMember
 
 admin.site.register(College)
 admin.site.register(Program)
-
+admin.site.register(Organization)
 
 @admin.register(Student)  # Keep this line
 class StudentAdmin(admin.ModelAdmin):
@@ -23,9 +23,3 @@ class OrgMemberAdmin(admin.ModelAdmin):
             return None
 
     get_member_program.short_description = 'Program'
-
-
-@admin.register(Organization)
-class OrganizationAdmin(admin.ModelAdmin):
-    list_display = ("name", "college")
-    search_fields = ("name",)

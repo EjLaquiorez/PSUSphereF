@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="content">
+    <div class="container-fluid">
+        <h4 class="page-title">Home</h4>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Delete Organization</div>
+                        <div class="card-category">Page Subtitle</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card-body">
+                            <form action="" method="post" novalidate>
+                                <p>Are you sure you want to delete "{{ object }}"?</p>
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <div class="col-md-12 col-sm-3">
+                                        <button type="submit" class="btn btn-danger btn-rounded">Delete</button>
+                                        <a href="{% url 'organization-list' %}" class="btn btn-secondary btn-rounded">Cancel</a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div> <!-- end card -->
+            </div> <!-- end col -->
+        </div> <!-- end row -->
+    </div> <!-- end container-fluid -->
+</div> <!-- end content -->
+{% endblock %}
