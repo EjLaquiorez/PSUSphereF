@@ -106,14 +106,14 @@
 						<li class="nav-item dropdown">
 							<a class="dropdown-toggle profile-pic" data-toggle="dropdown" href="#" aria-expanded="false"> 
                                 <img src="{% static 'img/profile.jpg' %}" alt="user-img" width="36" class="img-circle">
-                                <span >Arjay</span></span> </a>
+                                <span >Earl</span></span> </a>
 							<ul class="dropdown-menu dropdown-user">
 								<li>
 									<div class="user-box">
 										<div class="u-img"><img src="{% static 'img/profile.jpg' %}" alt="user"></div>
 										<div class="u-text">
-											<h4>Arjay</h4>
-											<p class="text-muted">hello@themekita.com</p><a href="profile.html" class="btn btn-rounded btn-danger btn-sm">View Profile</a></div>
+											<h4>Earl</h4>
+											<p class="text-muted">ejlqrz@gmail.com</p><a href="profile.html" class="btn btn-rounded btn-danger btn-sm">View Profile</a></div>
 										</div>
 									</li>
 									<div class="dropdown-divider"></div>
@@ -176,26 +176,31 @@
 							</a>
 						</li>
 						<li class="nav-item">
-							<a href="{% url 'organization-list' %}">
+							<a href="{% url 'organization-list'%}">
 								<i class="la la-table"></i>
                                 <p>Organization</p>
 							</a>
 						</li>
-						
 						<li class="nav-item">
-							<a href="{% url 'student-list' %}">
+							<a href="{% url 'orgmember-list'%}">
+								<i class="la la-keyboard-o"></i>
+								<p>Org. Members</p>
+							</a>
+						</li>
+						<li class="nav-item">
+							<a href="{% url 'student-list'%}">
 								<i class="la la-th"></i>
 								<p>Student</p>
 							</a>
 						</li>
 						<li class="nav-item">
-							<a href="">
+							<a href="{% url 'college-list'%}">
 								<i class="la la-bell"></i>
 								<p>College</p>
 							</a>
 						</li>
 						<li class="nav-item">
-							<a href="">
+							<a href="{% url 'program-list'%}">
 								<i class="la la-book"></i>
 								<p>Programs</p>
 							</a>
