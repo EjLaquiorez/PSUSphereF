@@ -39,10 +39,10 @@ class Organization(BaseModel):
 class Student(BaseModel):
     """Model representing a student."""
     student_id = models.CharField(max_length=15)
-    lastname = models.CharField(max_length=25)
-    firstname = models.CharField(max_length=25)
+    lastname = models.CharField(max_length=25, verbose_name="Last Name" )
+    firstname = models.CharField(max_length=25, verbose_name="First Name" )
     middlename = models.CharField(max_length=25, blank=True, null=True)
-    program = models.ForeignKey(Program, on_delete=models.CASCADE)
+    program = models.ForeignKey(Program, on_delete=models.CASCADE ,default=1)
 
     def __str__(self):
         return f"{self.lastname}, {self.firstname}"
@@ -53,3 +53,6 @@ class OrgMember(BaseModel):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
     date_joined = models.DateField()
+
+    def __str__(self):
+        return f"{self.student.firstname}, {self.student.lastname} - {self.organization.name}"
