@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from studentorg.models import Organization, OrgMember, Student, Program, College
@@ -17,6 +17,7 @@ from django.db.models.functions import TruncMonth
 from django.db.models.functions import ExtractYear
 from django.utils import timezone
 from datetime import datetime, timedelta
+from django.contrib import messages
 
 # Create your views here.
 
@@ -368,3 +369,30 @@ class CollegeDeleteView(DeleteView):
 #    form_class = CollegeForm
     template_name = 'college_del.html'
     success_url = reverse_lazy('college-list')
+
+@login_required
+def edit_profile(request):
+    if request.method == 'POST':
+        user = request.user
+        
+        # Update user info
+        user.username = request.POST.get('username')
+        user.email = request.POST.get('email')
+        user.first_name = request.POST.get('first_name')
+        user.last_name = request.POST.get('last_name')
+        
+        # Update profile info
+        if hasattr(user, 'profile'):
+            user.profile.bio = request.POST.get('bio')
+            
+            # Handle profile picture upload
+            if 'profile_picture' in request.FILES:
+                user.profile.image = request.FILES['profile_picture']
+            
+            user.profile.save()
+        
+        user.save()
+        messages.success(request, 'Your profile has been updated!')
+        return redirect('edit-profile')
+    
+    return render(request, 'edit_profile.html')

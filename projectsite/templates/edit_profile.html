@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Edit Profile</h4>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Profile Picture</label>
+                                        <div class="profile-pic-wrapper">
+                                            <img src="{{ user.profile.image.url|default:'static/img/profile.jpg' }}" class="profile-pic mb-3" style="max-width: 150px; border-radius: 50%;">
+                                            <input type="file" name="profile_picture" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label>Username</label>
+                                        <input type="text" class="form-control" name="username" value="{{ user.username }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Email</label>
+                                        <input type="email" class="form-control" name="email" value="{{ user.email }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>First Name</label>
+                                        <input type="text" class="form-control" name="first_name" value="{{ user.first_name }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Last Name</label>
+                                        <input type="text" class="form-control" name="last_name" value="{{ user.last_name }}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Bio</label>
+                                        <textarea class="form-control" name="bio" rows="4">{{ user.profile.bio }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-user">
+                    <div class="card-body">
+                        <div class="author">
+                            <img class="avatar border-gray" src="{{ user.profile.image.url|default:'static/img/profile.jpg' }}" alt="Profile Picture">
+                            <h5 class="title">{{ user.get_full_name }}</h5>
+                            <p class="description">
+                                @{{ user.username }}
+                            </p>
+                        </div>
+                        <p class="description text-center">
+                            {{ user.profile.bio|default:"No bio yet." }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
