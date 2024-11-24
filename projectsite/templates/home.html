@@ -2,20 +2,340 @@
 {% load static %}
 
 {% block content %}
-<div class="content">
-  <div class="container-fluid">
-    <h4 class="page-title">Home</h4>
-    <div class="row">
-      <div class="col-md-12">
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">Page Title</div>
-            <div class="card-category">Page Subtitle</div>
-          </div>
-          <div class="card-body">Hello, World</div>
+<div class="container-fluid px-4 py-5">
+    <!-- College Distribution Chart -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-xxl-10 col-xl-11 col-lg-12">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h4 mb-0">Student Distribution by College</h2>
+                </div>
+                <div class="card-body p-3">
+                    <canvas id="collegeChart" style="height: 60vh"></canvas>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
+
+    <!-- Organization Charts Row -->
+    <div class="row justify-content-center mb-4">
+        <!-- Organization Members Chart -->
+        <div class="col-xxl-5 col-xl-5 col-lg-6">
+            <div class="card shadow h-100">
+                <div class="card-header bg-success text-white">
+                    <h2 class="h4 mb-0">Organization Membership</h2>
+                </div>
+                <div class="card-body p-3">
+                    <canvas id="orgChart" style="height: 50vh"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly Membership Growth Chart -->
+        <div class="col-xxl-5 col-xl-5 col-lg-6">
+            <div class="card shadow h-100">
+                <div class="card-header bg-info text-white">
+                    <h2 class="h4 mb-0">Monthly Membership Growth</h2>
+                </div>
+                <div class="card-body p-3">
+                    <div id="timelineChartLegend" class="chart-legend"></div>
+                    <div class="chart-container" style="position: relative; height: 50vh; width: 100%;">
+                        <canvas id="timelineChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bubble Chart -->
+    <div class="row justify-content-center">
+        <div class="col-xxl-10 col-xl-11 col-lg-12">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-white">
+                    <h2 class="h4 mb-0">Organization Analysis</h2>
+                </div>
+                <div class="card-body p-3">
+                    <canvas id="bubbleChart" style="height: 60vh"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Organization Performance Metrics -->
+    <div class="row justify-content-center mt-4">
+        <div class="col-xxl-10 col-xl-11 col-lg-12">
+            <div class="card shadow">
+                <div class="card-header bg-secondary text-white">
+                    <h2 class="h4 mb-0">Organization Performance Metrics</h2>
+                </div>
+                <div class="card-body p-3">
+                    <canvas id="radarChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- Include Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    // Ensure data is properly parsed from Django template variables
+    const collegeLabels = JSON.parse('{{ college_labels|escapejs }}');
+    const collegeCounts = JSON.parse('{{ college_counts|escapejs }}');
+
+    // Define an array of colors for the bars
+    const backgroundColors = [
+        'rgba(255, 99, 132, 0.7)',    // Pink
+        'rgba(54, 162, 235, 0.7)',    // Blue
+        'rgba(255, 206, 86, 0.7)',    // Yellow
+        'rgba(75, 192, 192, 0.7)',    // Teal
+        'rgba(153, 102, 255, 0.7)',   // Purple
+        'rgba(255, 159, 64, 0.7)',    // Orange
+        'rgba(46, 204, 113, 0.7)',    // Green
+        'rgba(142, 68, 173, 0.7)',    // Deep Purple
+        'rgba(52, 152, 219, 0.7)',    // Light Blue
+        'rgba(231, 76, 60, 0.7)',     // Red
+    ];
+
+    const borderColors = backgroundColors.map(color => 
+        color.replace('0.7', '1')     // Make borders more solid
+    );
+
+    // Wait for DOM to be fully loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('collegeChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: collegeLabels,
+                datasets: [{
+                    label: 'Number of Students',
+                    data: collegeCounts,
+                    backgroundColor: backgroundColors,
+                    borderColor: borderColors,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Student Distribution Across Colleges',
+                        font: {
+                            size: 16
+                        }
+                    },
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Organization Members Chart
+        const orgCtx = document.getElementById('orgChart').getContext('2d');
+        new Chart(orgCtx, {
+            type: 'doughnut',
+            data: {
+                labels: JSON.parse('{{ org_labels|escapejs }}'),
+                datasets: [{
+                    data: JSON.parse('{{ org_counts|escapejs }}'),
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.7)',
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 206, 86, 0.7)',
+                        'rgba(75, 192, 192, 0.7)',
+                        'rgba(153, 102, 255, 0.7)',
+                        'rgba(255, 159, 64, 0.7)',
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Monthly Membership Growth Chart
+        const timelineCtx = document.getElementById('timelineChart').getContext('2d');
+        
+        // Create gradients
+        const gradientStroke = timelineCtx.createLinearGradient(500, 0, 100, 0);
+        gradientStroke.addColorStop(0, "#177dff");
+        gradientStroke.addColorStop(1, "#80b6f4");
+
+        const gradientFill = timelineCtx.createLinearGradient(500, 0, 100, 0);
+        gradientFill.addColorStop(0, "rgba(23, 125, 255, 0.7)");
+        gradientFill.addColorStop(1, "rgba(128, 182, 244, 0.3)");
+
+        new Chart(timelineCtx, {
+            type: 'line',
+            data: {
+                labels: JSON.parse('{{ timeline_labels|escapejs }}'),
+                datasets: [{
+                    label: 'New Members',
+                    borderColor: gradientStroke,
+                    pointBackgroundColor: gradientStroke,
+                    pointRadius: 0,
+                    backgroundColor: gradientFill,
+                    fill: true,
+                    borderWidth: 1,
+                    data: JSON.parse('{{ timeline_counts|escapejs }}')
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                legend: {
+                    display: false
+                },
+                tooltips: {
+                    bodySpacing: 4,
+                    mode: "nearest",
+                    intersect: 0,
+                    position: "nearest",
+                    xPadding: 10,
+                    yPadding: 10,
+                    caretPadding: 10
+                },
+                layout: {
+                    padding: { left: 15, right: 15, top: 15, bottom: 15 }
+                },
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            fontColor: "rgba(0,0,0,0.5)",
+                            fontStyle: "500",
+                            beginAtZero: true,
+                            maxTicksLimit: 5,
+                            padding: 20
+                        },
+                        gridLines: {
+                            drawTicks: false,
+                            display: false
+                        }
+                    }],
+                    xAxes: [{
+                        gridLines: {
+                            zeroLineColor: "transparent"
+                        },
+                        ticks: {
+                            padding: 20,
+                            fontColor: "rgba(0,0,0,0.5)",
+                            fontStyle: "500"
+                        }
+                    }]
+                }
+            }
+        });
+
+        // Add this to your DOMContentLoaded event listener
+        const bubbleCtx = document.getElementById('bubbleChart').getContext('2d');
+        new Chart(bubbleCtx, {
+            type: 'bubble',
+            data: {
+                datasets: JSON.parse('{{ bubble_data|escapejs }}').map((dataset, index) => ({
+                    label: dataset.label,
+                    data: dataset.data,
+                    backgroundColor: backgroundColors[index % backgroundColors.length],
+                }))
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Organization Membership Analysis',
+                        font: { size: 16 }
+                    },
+                    legend: {
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return [
+                                    `Organization: ${context.raw.org}`,
+                                    `Members: ${context.raw.x}`,
+                                    `Avg Join Date: ${context.raw.y}`,
+                                    `College Students: ${context.raw.r}`
+                                ];
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Number of Members'
+                        },
+                        beginAtZero: true
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Average Days Since Joining'
+                        },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Debug logs
+        console.log('Labels:', {{ radar_labels|safe }});
+        console.log('Datasets:', {{ radar_datasets|safe }});
+        
+        const radarCtx = document.getElementById('radarChart').getContext('2d');
+        const radarChart = new Chart(radarCtx, {
+            type: 'radar',
+            data: {
+                labels: {{ radar_labels|safe }},
+                datasets: {{ radar_datasets|safe }}
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 100,
+                        min: 0,
+                        ticks: {
+                            stepSize: 20
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.raw.toFixed(1) + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
 {% endblock %}
