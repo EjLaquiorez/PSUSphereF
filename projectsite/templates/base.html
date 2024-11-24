@@ -9,6 +9,8 @@
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i">
 	<link rel="stylesheet" href="{% static 'css/ready.css' %}">
 	<link rel="stylesheet" href="{% static 'css/demo.css' %}">
+	<link rel="stylesheet" href="{% static 'css/dark-theme.css' %}" id="theme-stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/darkreader@4.9.58/darkreader.min.js"></script>
 </head>
 <body>
 	<div class="wrapper">
@@ -36,6 +38,12 @@
 						</div>
 					</form>
 					<ul class="navbar-nav topbar-nav ml-md-auto align-items-center">
+						<li class="nav-item">
+							<button id="theme-toggle" class="btn btn-link nav-link">
+								<i class="la la-moon"></i>
+								<span class="theme-text">Dark Mode</span>
+							</button>
+						</li>
 						<li class="nav-item dropdown hidden-caret">
 							<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 								<i class="la la-envelope"></i>
@@ -235,6 +243,37 @@
 			</div>
 		</div>
 	</div>
+	<script>
+		document.getElementById('theme-toggle').addEventListener('click', function() {
+			const icon = this.querySelector('i');
+			if (DarkReader.isEnabled()) {
+				DarkReader.disable();
+				icon.classList.remove('la-sun');
+				icon.classList.add('la-moon');
+				localStorage.setItem('theme', 'light');
+			} else {
+				DarkReader.enable({
+					brightness: 100,
+					contrast: 90,
+					sepia: 10
+				});
+				icon.classList.remove('la-moon');
+				icon.classList.add('la-sun');
+				localStorage.setItem('theme', 'dark');
+			}
+		});
+
+		// Check for saved theme preference
+		if (localStorage.getItem('theme') === 'dark') {
+			DarkReader.enable({
+				brightness: 100,
+				contrast: 90,
+				sepia: 10
+			});
+			document.querySelector('#theme-toggle i').classList.remove('la-moon');
+			document.querySelector('#theme-toggle i').classList.add('la-sun');
+		}
+	</script>
 </body>
 <script src="{% static 'js/core/jquery.3.2.1.min.js' %}"></script>
 <script src="{% static 'js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js' %}"></script>
