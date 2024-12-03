@@ -1,0 +1,339 @@
+/* ==========================================================================
+   Theme Variables
+   ========================================================================== */
+:root {
+    /* Base Theme Colors */
+    --background-main: #1a1a1a;
+    --background-secondary: #2d2d2d;
+    --text-primary: #e6e6e6;
+    --text-secondary: #a0a0a0;
+    --border-color: #404040;
+
+    /* Light Theme Colors */
+    --background-main-light: #f4f4f4;
+    --background-secondary-light: #ffffff;
+    --text-primary-light: #2d2d2d;
+    --text-secondary-light: #595959;
+    --border-color-light: #dddddd;
+
+    /* Dark Theme Colors */
+    --background-main-dark: #1a1a1a;
+    --background-secondary-dark: #2d2d2d;
+    --text-primary-dark: #f0f0f0;
+    --text-secondary-dark: #b8b8b8;
+    --border-color-dark: #404040;
+}
+
+/* ==========================================================================
+   Base Styles
+   ========================================================================== */
+body {
+    background-color: var(--background-main);
+    color: var(--text-primary);
+}
+
+/* ==========================================================================
+   Layout Components
+   ========================================================================== */
+.wrapper,
+.main-panel {
+    background-color: var(--background-main);
+}
+
+.main-header,
+.logo-header,
+.navbar,
+.sidebar {
+    background-color: var(--background-secondary);
+}
+
+.main-header,
+.sidebar {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar {
+    border-right: 1px solid var(--border-color);
+}
+
+/* ==========================================================================
+   Navigation
+   ========================================================================== */
+.nav-item a {
+    color: var(--text-primary) !important;
+}
+
+.nav-item a:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.nav-item .user-level {
+    color: var(--text-secondary);
+}
+
+/* ==========================================================================
+   Forms & Inputs
+   ========================================================================== */
+.form-control {
+    background-color: var(--background-main);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+.form-control:focus {
+    background-color: var(--background-main);
+    color: var(--text-primary);
+}
+
+/* ==========================================================================
+   Dropdowns
+   ========================================================================== */
+.dropdown-menu {
+    background-color: var(--background-secondary);
+    border: 1px solid var(--border-color);
+}
+
+.dropdown-item {
+    color: var(--text-primary);
+}
+
+.dropdown-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+
+/* ==========================================================================
+   Cards & Content
+   ========================================================================== */
+.card {
+    background-color: var(--background-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+.card-header {
+    background-color: var(--background-secondary);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.card-title {
+    color: var(--text-primary);
+}
+
+/* ==========================================================================
+   Tables
+   ========================================================================== */
+.table {
+    color: var(--text-primary);
+}
+
+.table thead th {
+    border-bottom: 2px solid var(--border-color);
+}
+
+.table td, 
+.table th {
+    border-top: 1px solid var(--border-color);
+}
+
+/* ==========================================================================
+   Pagination
+   ========================================================================== */
+.pagination .page-link {
+    background-color: var(--background-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+.pagination .page-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #2196F3;
+    border-color: #2196F3;
+    color: #ffffff;
+}
+
+/* ==========================================================================
+   Buttons
+   ========================================================================== */
+.btn {
+    border: 1px solid var(--border-color);
+}
+
+.btn-primary {
+    background-color: #1976D2;
+    border-color: #1976D2;
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background-color: #1565C0;
+    border-color: #1565C0;
+}
+
+.btn-secondary {
+    background-color: var(--background-secondary);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+.btn-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+.btn-success {
+    background-color: #00C853;
+    border-color: #00C853;
+    color: #ffffff;
+}
+
+.btn-success:hover {
+    background-color: #1B5E20;
+    border-color: #1B5E20;
+}
+
+.btn-danger {
+    background-color: #D32F2F;
+    border-color: #D32F2F;
+    color: #ffffff;
+}
+
+.btn-danger:hover {
+    background-color: #C62828;
+    border-color: #C62828;
+}
+
+.btn-warning {
+    background-color: #F57C00;
+    border-color: #F57C00;
+    color: #ffffff;
+}
+
+.btn-warning:hover {
+    background-color: #EF6C00;
+    border-color: #EF6C00;
+}
+
+.btn-info {
+    background-color: #0288D1;
+    border-color: #0288D1;
+    color: #ffffff;
+}
+
+.btn-info:hover {
+    background-color: #0277BD;
+    border-color: #0277BD;
+}
+
+/* ==========================================================================
+   Modals & Toasts
+   ========================================================================== */
+.modal-content {
+    background-color: var(--background-secondary);
+    color: var(--text-primary);
+}
+
+.toast {
+    background-color: var(--background-secondary);
+    color: var(--text-primary);
+}
+
+/* ==========================================================================
+   Theme Toggle Switch
+   ========================================================================== */
+.theme-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    margin: 0 15px;
+}
+
+.theme-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #2196F3;
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+/* ==========================================================================
+   Theme Settings
+   ========================================================================== */
+:root[data-theme="light"] {
+    --background-main: var(--background-main-light);
+    --background-secondary: var(--background-secondary-light);
+    --text-primary: var(--text-primary-light);
+    --text-secondary: var(--text-secondary-light);
+    --border-color: var(--border-color-light);
+}
+
+:root[data-theme="dark"] {
+    --background-main: var(--background-main-dark);
+    --background-secondary: var(--background-secondary-dark);
+    --text-primary: var(--text-primary-dark);
+    --text-secondary: var(--text-secondary-dark);
+    --border-color: var(--border-color-dark);
+}
+
+/* ==========================================================================
+   Utilities
+   ========================================================================== */
+.text-muted {
+    color: var(--text-secondary) !important;
+}
+
+pre, 
+code {
+    background-color: var(--background-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+.main-panel a {
+    color: #42a5f5;
+}
+
+.main-panel a:hover {
+    color: #64b5f6;
+}
+
+.notif-content .time {
+    color: var(--text-secondary);
+} 

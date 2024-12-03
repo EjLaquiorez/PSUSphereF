@@ -3,14 +3,15 @@
 <html>
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-	<title>{% block title %}PSUSphere{% endblock %}</title>
+	<title>{% block title %}PSUSphere - Student Organization Management{% endblock %}</title>
 	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no' name='viewport' />
 	<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i">
 	<link rel="stylesheet" href="{% static 'css/ready.css' %}">
 	<link rel="stylesheet" href="{% static 'css/demo.css' %}">
-	<link rel="stylesheet" href="{% static 'css/dark-theme.css' %}" id="theme-stylesheet">
-	<script src="https://cdn.jsdelivr.net/npm/darkreader@4.9.58/darkreader.min.js"></script>
+	<link rel="stylesheet" href="{% static 'css/theme.css' %}">
+	<link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&display=swap" rel="stylesheet">
 </head>
 <body>
 	<div id="toast-container" aria-live="polite" aria-atomic="true" style="position: fixed; bottom: 20px; right: 20px; z-index: 1050"></div>
@@ -22,7 +23,7 @@
 				</a>
 				<button class="navbar-toggler sidenav-toggler ml-auto" type="button" data-toggle="collapse" data-target="collapse" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon">
-						<img src="{% static 'img/menu2.png' %}" alt="menu">
+						<img src="{% static 'img/menu2.png' %}" alt="menu" class="menu-icon">
 					</span>
 				</button>
 				<button class="topbar-toggler more"><i class="la la-ellipsis-v"></i></button>
@@ -40,13 +41,15 @@
 							</div>
 						</div>
 					</form>
+					<div class="theme-toggle d-flex align-items-center">
+						<span class="mr-2"><i class="la la-sun"></i></span>
+						<label class="theme-switch">
+							<input type="checkbox" id="theme-toggle">
+							<span class="slider"></span>
+						</label>
+						<span class="ml-2"><i class="la la-moon"></i></span>
+					</div>
 					<ul class="navbar-nav topbar-nav ml-md-auto align-items-center">
-						<li class="nav-item">
-							<button id="theme-toggle" class="btn btn-link nav-link" onclick="toggleTheme()">
-								<i class="la la-moon"></i>
-								<span class="theme-text">Dark Mode</span>
-							</button>
-						</li>
 						<li class="nav-item dropdown hidden-caret">
 							<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 								<i class="la la-envelope"></i>
@@ -246,62 +249,15 @@
 			</div>
 		</div>
 	</div>
-	<script>
-		// Check the user's theme preference and apply it
-		function loadTheme() {
-			const savedTheme = localStorage.getItem('theme');
-			if (savedTheme) {
-				document.body.setAttribute('data-theme', savedTheme);
-				updateButtonText(savedTheme);
-			} else {
-				// Default to light theme
-				document.body.setAttribute('data-theme', 'light');
-				updateButtonText('light');
-			}
-		}
-
-		// Update the button text based on the current theme
-		function updateButtonText(theme) {
-			const button = document.getElementById('theme-toggle');
-			const themeText = button.querySelector('.theme-text');
-			const icon = button.querySelector('i');
-			
-			if (theme === 'light') {
-				themeText.textContent = 'Dark Mode';
-				icon.className = 'la la-moon';
-			} else {
-				themeText.textContent = 'Light Mode';
-				icon.className = 'la la-sun';
-			}
-		}
-
-		// Toggle between light and dark themes
-		function toggleTheme() {
-			let currentTheme = document.body.getAttribute('data-theme');
-			let newTheme = currentTheme === 'light' ? 'dark' : 'light';
-			
-			// Set the new theme
-			document.body.setAttribute('data-theme', newTheme);
-			
-			// Save the theme preference to localStorage
-			localStorage.setItem('theme', newTheme);
-
-			// Update the button text accordingly
-			updateButtonText(newTheme);
-		}
-
-		// Load the theme on page load
-		window.onload = loadTheme;
-	</script>
 	{% if messages %}
 	<script>
 		document.addEventListener("DOMContentLoaded", function () {
 			{% for message in messages %}
 				const toastHTML = `
 					<div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="3000">
-						<div class="toast-header">
+						<div class="toast-header {% if message.tags == 'success' %}bg-success text-white{% elif message.tags == 'error' %}bg-danger text-white{% endif %}">
 							<strong class="mr-auto">{{ message.tags|capfirst }}</strong>
-							<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+							<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close" onclick="this.closest('.toast').remove()">
 								<span aria-hidden="true">&times;</span>
 							</button>
 						</div>
@@ -310,25 +266,38 @@
 						</div>
 					</div>`;
 				document.getElementById('toast-container').insertAdjacentHTML('beforeend', toastHTML);
-				const toast = new bootstrap.Toast(document.getElementById('toast-container').lastElementChild);
+				const toastElement = document.getElementById('toast-container').lastElementChild;
+				const toast = new bootstrap.Toast(toastElement);
 				toast.show();
 			{% endfor %}
 		});
 	</script>
 	{% endif %}
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>	
+	<script src="{% static 'js/core/jquery.3.2.1.min.js' %}"></script>
+	<script src="{% static 'js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js' %}"></script>
+	<script src="{% static 'js/core/popper.min.js' %}"></script>
+	<script src="{% static 'js/core/bootstrap.min.js' %}"></script>
+	<script src="{% static 'js/ready.min.js' %}"></script>
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			const toggleSwitch = document.getElementById('theme-toggle');
+			
+			// Check for saved theme preference
+			const currentTheme = localStorage.getItem('theme') || 'light';
+			document.documentElement.setAttribute('data-theme', currentTheme);
+			toggleSwitch.checked = currentTheme === 'dark';
+
+			// Theme switch handler
+			toggleSwitch.addEventListener('change', function(e) {
+				if (e.target.checked) {
+					document.documentElement.setAttribute('data-theme', 'dark');
+					localStorage.setItem('theme', 'dark');
+				} else {
+					document.documentElement.setAttribute('data-theme', 'light');
+					localStorage.setItem('theme', 'light');
+				}
+			});
+		});
+	</script>
 </body>
-<script src="{% static 'js/core/jquery.3.2.1.min.js' %}"></script>
-<script src="{% static 'js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js' %}"></script>
-<script src="{% static 'js/core/popper.min.js' %}"></script>
-<script src="{% static 'js/core/bootstrap.min.js' %}"></script>
-<script src="{% static 'js/plugin/chartist/chartist.min.js' %}"></script>
-<script src="{% static 'js/plugin/chartist/plugin/chartist-plugin-tooltip.min.js'%}"></script>
-<script src="{% static 'js/plugin/bootstrap-notify/bootstrap-notify.min.js' %}"></script>
-<script src="{% static 'js/plugin/bootstrap-toggle/bootstrap-toggle.min.js' %}"></script>
-<script src="{% static 'js/plugin/jquery-mapael/jquery.mapael.min.js' %}"></script>
-<script src="{% static 'js/plugin/jquery-mapael/maps/world_countries.min.js' %}"></script>
-<script src="{% static 'js/plugin/chart-circle/circles.min.js' %}"></script>
-<script src="{% static 'js/plugin/jquery-scrollbar/jquery.scrollbar.min.js' %}"></script>
-<script src="{% static 'js/ready.min.js' %}"></script>
 </html>
