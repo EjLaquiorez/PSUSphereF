@@ -56,3 +56,17 @@ class OrgMember(BaseModel):
 
     def __str__(self):
         return f"{self.student.firstname}, {self.student.lastname} - {self.organization.name}"
+
+
+class Boat(BaseModel):
+    """Model representing a boat."""
+    name = models.CharField(max_length=100)
+    length = models.FloatField()
+    width = models.FloatField()
+    height = models.FloatField()
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['-created_at']

@@ -1,0 +1,8 @@
+{% block content %}
+  <h2>Are you sure you want to delete this boat?</h2>
+  <p>Boat: {{ boat.boat_name }}</p>
+  <form method="post">{% csrf_token %}
+      <button type="submit" class="btn btn-danger">Delete</button>
+  </form>
+  <a href="{% url 'boat-list' %}" class="btn btn-secondary">Cancel</a>
+{% endblock %}

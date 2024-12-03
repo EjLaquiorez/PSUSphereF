@@ -1,0 +1,52 @@
+<<<<<<< HEAD
+/*     Nav Search     */
+
+.nav-search {
+  .input-group {
+    border: 1px solid #eee;
+    background: #eee;
+    border-radius: 50px;
+    &:hover, &:focus {
+      border: 1px solid #ddd;
+    }
+  }
+  .form-control {
+    border: 0;
+    background: $transparent-bg;
+    font-size: 14px;
+  }
+  .input-group-text {
+    border: 0;
+    background: $transparent-bg;
+  }
+  .search-icon {
+    font-size: 21px;
+    color: #666;
+  }
+=======
+/*     Nav Search     */
+
+.nav-search {
+  .input-group {
+    border: 1px solid #eee;
+    background: #eee;
+    border-radius: 50px;
+    &:hover, &:focus {
+      border: 1px solid #ddd;
+    }
+  }
+  .form-control {
+    border: 0;
+    background: $transparent-bg;
+    font-size: 14px;
+  }
+  .input-group-text {
+    border: 0;
+    background: $transparent-bg;
+  }
+  .search-icon {
+    font-size: 21px;
+    color: #666;
+  }
+>>>>>>> 2a0b7f0f103ee47a74d286c32c4864e08d087796
+}

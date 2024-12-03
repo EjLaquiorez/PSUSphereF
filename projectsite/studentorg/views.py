@@ -1,7 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from studentorg.models import Organization, OrgMember, Student, Program, College
+from studentorg.models import Organization, OrgMember, Student, Program, College, Boat
 from studentorg.forms import OrganizationForm, OrgMemberForm, StudentForm, ProgramForm, CollegeForm
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
@@ -17,6 +17,7 @@ from django.db.models.functions import TruncMonth
 from django.db.models.functions import ExtractYear
 from django.utils import timezone
 from datetime import datetime, timedelta
+from django.contrib import messages
 
 # Create your views here.
 
@@ -213,18 +214,20 @@ class HomePageView(TemplateView):
         })
         return context
 
+# Organization Views
 class Organizationlist(ListView):
     model = Organization
     content_object_name = 'organization'
     template_name = 'org_list.html'
     paginate_by = 5
-    
+
     def get_queryset(self, *args, **kwargs):
-        qs = super(Organizationlist, self).get_queryset(*args, **kwargs)
-        if self.request.GET.get("q") != None:
+        qs = super().get_queryset(*args, **kwargs)
+        if self.request.GET.get("q"):
             query = self.request.GET.get('q')
             qs = qs.filter(Q(name__icontains=query) | Q(description__icontains=query))
         return qs
+
 
 class OrganizationCreateView(CreateView):
     model = Organization
@@ -232,18 +235,42 @@ class OrganizationCreateView(CreateView):
     template_name = 'org_add.html'
     success_url = reverse_lazy('organization-list')
 
+    def form_valid(self, form):
+        messages.success(self.request, f"Organization '{form.instance.name}' has been created successfully!")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Failed to create the organization. Please check the form for errors.")
+        return super().form_invalid(form)
+
+
 class OrganizationUpdateView(UpdateView):
     model = Organization
     form_class = OrganizationForm
     template_name = 'org_edit.html'
     success_url = reverse_lazy('organization-list')
 
+    def form_valid(self, form):
+        messages.success(self.request, f"Organization '{form.instance.name}' has been updated successfully!")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Failed to update the organization. Please check the form for errors.")
+        return super().form_invalid(form)
+
+
 class OrganizationDeleteView(DeleteView):
     model = Organization
-#    form_class = OrganizationForm
     template_name = 'org_del.html'
     success_url = reverse_lazy('organization-list')
 
+    def delete(self, request, *args, **kwargs):
+        organization = self.get_object()
+        messages.success(self.request, f"Organization '{organization.name}' has been deleted successfully!")
+        return super().delete(request, *args, **kwargs)
+
+
+# OrgMember Views
 class OrgMemberlist(ListView):
     model = OrgMember
     content_object_name = 'orgmember'
@@ -251,11 +278,12 @@ class OrgMemberlist(ListView):
     paginate_by = 5
 
     def get_queryset(self, *args, **kwargs):
-        qs = super(OrgMemberlist, self).get_queryset(*args, **kwargs)
-        if self.request.GET.get("q") != None:
+        qs = super().get_queryset(*args, **kwargs)
+        if self.request.GET.get("q"):
             query = self.request.GET.get('q')
-            qs = qs.filter(Q(date_joined__icontains=query) | Q(student_firstname__icontains=query)) 
+            qs = qs.filter(Q(date_joined__icontains=query) | Q(student__firstname__icontains=query))
         return qs
+
 
 class OrgMemberCreateView(CreateView):
     model = OrgMember
@@ -263,18 +291,42 @@ class OrgMemberCreateView(CreateView):
     template_name = 'orgmember_add.html'
     success_url = reverse_lazy('orgmember-list')
 
+    def form_valid(self, form):
+        messages.success(self.request, f"Org Member '{form.instance.student}' has been added to '{form.instance.organization}' successfully!")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Failed to add the org member. Please check the form for errors.")
+        return super().form_invalid(form)
+
+
 class OrgMemberUpdateView(UpdateView):
     model = OrgMember
     form_class = OrgMemberForm
     template_name = 'orgmember_edit.html'
     success_url = reverse_lazy('orgmember-list')
 
+    def form_valid(self, form):
+        messages.success(self.request, f"Org Member '{form.instance.student}' has been updated successfully!")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Failed to update the org member. Please check the form for errors.")
+        return super().form_invalid(form)
+
+
 class OrgMemberDeleteView(DeleteView):
     model = OrgMember
-#    form_class = OrgMemberForm
     template_name = 'orgmember_del.html'
     success_url = reverse_lazy('orgmember-list')
 
+    def delete(self, request, *args, **kwargs):
+        org_member = self.get_object()
+        messages.success(self.request, f"Org Member '{org_member.student}' has been removed successfully!")
+        return super().delete(request, *args, **kwargs)
+
+
+# Student Views
 class StudentList(ListView):
     model = Student
     content_object_name = 'student'
@@ -282,17 +334,27 @@ class StudentList(ListView):
     paginate_by = 5
 
     def get_queryset(self, *args, **kwargs):
-        qs = super(StudentList, self).get_queryset(*args, **kwargs)
-        if self.request.GET.get("q") != None:
+        qs = super().get_queryset(*args, **kwargs)
+        if self.request.GET.get("q"):
             query = self.request.GET.get('q')
-            qs = qs.filter(Q(student_id__icontains=query) | Q(firstname__icontains=query) | Q(lastname__icontains=query) | Q(middlename__icontains=query))
+            qs = qs.filter(Q(student_id__icontains=query) | Q(firstname__icontains=query) | Q(lastname__icontains=query))
         return qs
+
 
 class StudentCreateView(CreateView):
     model = Student
     form_class = StudentForm
-    template_name = 'orgmember_add.html'
+    template_name = 'student_add.html'
     success_url = reverse_lazy('student-list')
+
+    def form_valid(self, form):
+        messages.success(self.request, f"Student '{form.instance.firstname} {form.instance.lastname}' has been added successfully!")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Failed to add the student. Please check the form for errors.")
+        return super().form_invalid(form)
+
 
 class StudentUpdateView(UpdateView):
     model = Student
@@ -300,13 +362,27 @@ class StudentUpdateView(UpdateView):
     template_name = 'student_edit.html'
     success_url = reverse_lazy('student-list')
 
+    def form_valid(self, form):
+        messages.success(self.request, f"Student '{form.instance.firstname} {form.instance.lastname}' has been updated successfully!")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Failed to update the student. Please check the form for errors.")
+        return super().form_invalid(form)
+
+
 class StudentDeleteView(DeleteView):
     model = Student
-#    form_class = StudentForm
     template_name = 'student_del.html'
     success_url = reverse_lazy('student-list')
 
+    def delete(self, request, *args, **kwargs):
+        student = self.get_object()
+        messages.success(self.request, f"Student '{student.firstname} {student.lastname}' has been deleted successfully!")
+        return super().delete(request, *args, **kwargs)
 
+
+# Program Views
 class ProgramList(ListView):
     model = Program
     content_object_name = 'program'
@@ -314,11 +390,12 @@ class ProgramList(ListView):
     paginate_by = 5
 
     def get_queryset(self, *args, **kwargs):
-        qs = super(ProgramList, self).get_queryset(*args, **kwargs)
-        if self.request.GET.get("q") != None:
+        qs = super().get_queryset(*args, **kwargs)
+        if self.request.GET.get("q"):
             query = self.request.GET.get('q')
             qs = qs.filter(Q(prog_name__icontains=query))
         return qs
+
 
 class ProgramCreateView(CreateView):
     model = Program
@@ -326,18 +403,42 @@ class ProgramCreateView(CreateView):
     template_name = 'program_add.html'
     success_url = reverse_lazy('program-list')
 
+    def form_valid(self, form):
+        messages.success(self.request, f"Program '{form.instance.prog_name}' has been added successfully!")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Failed to add the program. Please check the form for errors.")
+        return super().form_invalid(form)
+
+
 class ProgramUpdateView(UpdateView):
     model = Program
     form_class = ProgramForm
     template_name = 'program_edit.html'
     success_url = reverse_lazy('program-list')
 
+    def form_valid(self, form):
+        messages.success(self.request, f"Program '{form.instance.prog_name}' has been updated successfully!")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Failed to update the program. Please check the form for errors.")
+        return super().form_invalid(form)
+
+
 class ProgramDeleteView(DeleteView):
     model = Program
-#    form_class = ProgramForm
     template_name = 'program_del.html'
     success_url = reverse_lazy('program-list')
 
+    def delete(self, request, *args, **kwargs):
+        program = self.get_object()
+        messages.success(self.request, f"Program '{program.prog_name}' has been deleted successfully!")
+        return super().delete(request, *args, **kwargs)
+
+
+# College Views
 class CollegeList(ListView):
     model = College
     content_object_name = 'college'
@@ -345,11 +446,12 @@ class CollegeList(ListView):
     paginate_by = 5
 
     def get_queryset(self, *args, **kwargs):
-        qs = super(CollegeList, self).get_queryset(*args, **kwargs)
-        if self.request.GET.get("q") != None:
+        qs = super().get_queryset(*args, **kwargs)
+        if self.request.GET.get("q"):
             query = self.request.GET.get('q')
             qs = qs.filter(Q(college_name__icontains=query))
         return qs
+
 
 class CollegeCreateView(CreateView):
     model = College
@@ -357,14 +459,117 @@ class CollegeCreateView(CreateView):
     template_name = 'college_add.html'
     success_url = reverse_lazy('college-list')
 
+    def form_valid(self, form):
+        messages.success(self.request, f"College '{form.instance.college_name}' has been added successfully!")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Failed to add the college. Please check the form for errors.")
+        return super().form_invalid(form)
+
+
 class CollegeUpdateView(UpdateView):
     model = College
     form_class = CollegeForm
     template_name = 'college_edit.html'
     success_url = reverse_lazy('college-list')
 
+    def form_valid(self, form):
+        messages.success(self.request, f"College '{form.instance.college_name}' has been updated successfully!")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Failed to update the college. Please check the form for errors.")
+        return super().form_invalid(form)
+
+
 class CollegeDeleteView(DeleteView):
     model = College
-#    form_class = CollegeForm
     template_name = 'college_del.html'
     success_url = reverse_lazy('college-list')
+
+    def delete(self, request, *args, **kwargs):
+        college = self.get_object()
+        messages.success(self.request, f"College '{college.college_name}' has been deleted successfully!")
+        return super().delete(request, *args, **kwargs)
+
+
+# Boat Views
+class BoatCreateView(CreateView):
+    model = Boat
+    fields = "__all__"
+    template_name = "boat_form.html"
+    success_url = reverse_lazy('boat-list')
+
+    def post(self, request, *args, **kwargs):
+        length = request.POST.get('length')
+        width = request.POST.get('width')
+        height = request.POST.get('height')
+
+        # Validate dimensions
+        errors = []
+        for field_name, value in [('length', length), ('width', width), ('height', height)]:
+            try:
+                if float(value) <= 0:
+                    errors.append(f"{field_name.capitalize()} must be greater than 0.")
+            except (ValueError, TypeError):
+                errors.append(f"{field_name.capitalize()} must be a valid number.")
+
+        # If errors exist, display them and return to the form
+        if errors:
+            for error in errors:
+                messages.error(request, error)
+            return self.form_invalid(self.get_form())
+
+        # Call the parent's post() if validation passes
+        return super().post(request, *args, **kwargs)
+
+
+class BoatUpdateView(UpdateView):
+    model = Boat
+    fields = "__all__"
+    template_name = "boat_form.html"
+    success_url = reverse_lazy('boat-list')
+
+    def post(self, request, *args, **kwargs):
+        length = request.POST.get('length')
+        width = request.POST.get('width')
+        height = request.POST.get('height')
+
+        # Validate dimensions
+        errors = []
+        for field_name, value in [('length', length), ('width', width), ('height', height)]:
+            try:
+                if float(value) <= 0:
+                    errors.append(f"{field_name.capitalize()} must be greater than 0.")
+            except (ValueError, TypeError):
+                errors.append(f"{field_name.capitalize()} must be a valid number.")
+
+        # If errors exist, display them and return to the form
+        if errors:
+            for error in errors:
+                messages.error(request, error)
+            return self.form_invalid(self.get_form())
+
+        # Call the parent's post() if validation passes
+        return super().post(request, *args, **kwargs)
+    
+class BoatDeleteView(DeleteView):
+    model = Boat
+    template_name = 'boat_confirm_delete.html'
+    success_url = reverse_lazy('boat-list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['boat'] = self.get_object()  # Ensure the boat object is available in the template
+        return context
+
+    def delete(self, request, *args, **kwargs):
+        boat = self.get_object()
+        try:
+            result = super().delete(request, *args, **kwargs)  # Delete the boat
+            messages.success(request, f"Boat '{boat.boat_name}' has been deleted successfully!")
+            return result
+        except Exception as e:
+            messages.error(request, f"Error deleting boat: {str(e)}")
+            return redirect('boat-list')
