@@ -21,7 +21,9 @@
 					Ready Dashboard
 				</a>
 				<button class="navbar-toggler sidenav-toggler ml-auto" type="button" data-toggle="collapse" data-target="collapse" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
+					<span class="navbar-toggler-icon">
+						<img src="{% static 'img/menu2.png' %}" alt="menu">
+					</span>
 				</button>
 				<button class="topbar-toggler more"><i class="la la-ellipsis-v"></i></button>
 			</div>
@@ -40,7 +42,7 @@
 					</form>
 					<ul class="navbar-nav topbar-nav ml-md-auto align-items-center">
 						<li class="nav-item">
-							<button id="theme-toggle" class="btn btn-link nav-link">
+							<button id="theme-toggle" class="btn btn-link nav-link" onclick="toggleTheme()">
 								<i class="la la-moon"></i>
 								<span class="theme-text">Dark Mode</span>
 							</button>
@@ -245,35 +247,51 @@
 		</div>
 	</div>
 	<script>
-		document.getElementById('theme-toggle').addEventListener('click', function() {
-			const icon = this.querySelector('i');
-			if (DarkReader.isEnabled()) {
-				DarkReader.disable();
-				icon.classList.remove('la-sun');
-				icon.classList.add('la-moon');
-				localStorage.setItem('theme', 'light');
+		// Check the user's theme preference and apply it
+		function loadTheme() {
+			const savedTheme = localStorage.getItem('theme');
+			if (savedTheme) {
+				document.body.setAttribute('data-theme', savedTheme);
+				updateButtonText(savedTheme);
 			} else {
-				DarkReader.enable({
-					brightness: 100,
-					contrast: 90,
-					sepia: 10
-				});
-				icon.classList.remove('la-moon');
-				icon.classList.add('la-sun');
-				localStorage.setItem('theme', 'dark');
+				// Default to light theme
+				document.body.setAttribute('data-theme', 'light');
+				updateButtonText('light');
 			}
-		});
-
-		// Check for saved theme preference
-		if (localStorage.getItem('theme') === 'dark') {
-			DarkReader.enable({
-				brightness: 100,
-				contrast: 90,
-				sepia: 10
-			});
-			document.querySelector('#theme-toggle i').classList.remove('la-moon');
-			document.querySelector('#theme-toggle i').classList.add('la-sun');
 		}
+
+		// Update the button text based on the current theme
+		function updateButtonText(theme) {
+			const button = document.getElementById('theme-toggle');
+			const themeText = button.querySelector('.theme-text');
+			const icon = button.querySelector('i');
+			
+			if (theme === 'light') {
+				themeText.textContent = 'Dark Mode';
+				icon.className = 'la la-moon';
+			} else {
+				themeText.textContent = 'Light Mode';
+				icon.className = 'la la-sun';
+			}
+		}
+
+		// Toggle between light and dark themes
+		function toggleTheme() {
+			let currentTheme = document.body.getAttribute('data-theme');
+			let newTheme = currentTheme === 'light' ? 'dark' : 'light';
+			
+			// Set the new theme
+			document.body.setAttribute('data-theme', newTheme);
+			
+			// Save the theme preference to localStorage
+			localStorage.setItem('theme', newTheme);
+
+			// Update the button text accordingly
+			updateButtonText(newTheme);
+		}
+
+		// Load the theme on page load
+		window.onload = loadTheme;
 	</script>
 	{% if messages %}
 	<script>
@@ -298,7 +316,7 @@
 		});
 	</script>
 	{% endif %}
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>	
 </body>
 <script src="{% static 'js/core/jquery.3.2.1.min.js' %}"></script>
 <script src="{% static 'js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js' %}"></script>
