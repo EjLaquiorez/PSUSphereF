@@ -17,6 +17,7 @@ from django.db.models.functions import TruncMonth
 from django.db.models.functions import ExtractYear
 from django.utils import timezone
 from datetime import datetime, timedelta
+from django.contrib import messages
 
 # Create your views here.
 
@@ -231,6 +232,14 @@ class OrganizationCreateView(CreateView):
     form_class = OrganizationForm
     template_name = 'org_add.html'
     success_url = reverse_lazy('organization-list')
+
+    def form_valid(self, form):
+        messages.success(self.request, f"Organization '{form.instance.name}' has been created successfully!")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Failed to create the organization. Please check the form for errors.")
+        return super().form_invalid(form)
 
 class OrganizationUpdateView(UpdateView):
     model = Organization
