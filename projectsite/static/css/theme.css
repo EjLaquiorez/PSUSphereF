@@ -3,25 +3,31 @@
    ========================================================================== */
 :root {
     /* Base Theme Colors */
-    --background-main: #1a1a1a;
-    --background-secondary: #2d2d2d;
-    --text-primary: #e6e6e6;
-    --text-secondary: #a0a0a0;
+    --background-main: #fafafa;
+    --background-secondary: #f0f2f5;
+    --text-primary: #2d2d2d;
+    --text-secondary: #6c757d;
     --border-color: #404040;
+    --accent-color: #2196F3;
+    --header-color: #f0f2f5;
 
     /* Light Theme Colors */
-    --background-main-light: #f4f4f4;
-    --background-secondary-light: #ffffff;
-    --text-primary-light: #2d2d2d;
-    --text-secondary-light: #595959;
-    --border-color-light: #dddddd;
+    --background-main-light: #fafafa;
+    --background-secondary-light: #f0f2f5;
+    --text-primary-light: #000000;
+    --text-secondary-light: #6c757d;
+    --border-color-light: #dee2e6;
+    --accent-color-light: #007bff;
+    --header-color-light: #f0f2f5;
 
     /* Dark Theme Colors */
-    --background-main-dark: #1a1a1a;
+    --background-main-dark: #121212;
     --background-secondary-dark: #2d2d2d;
     --text-primary-dark: #f0f0f0;
     --text-secondary-dark: #b8b8b8;
     --border-color-dark: #404040;
+    --accent-color-dark: #17a2b8;
+    --header-color-dark: #1f1f1f;
 }
 
 /* ==========================================================================
@@ -249,9 +255,10 @@ body {
    ========================================================================== */
 .theme-switch {
     position: relative;
-    display: inline-block;
-    width: 60px;
-    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    width: 36px;
+    height: 20px;
     margin: 0 15px;
 }
 
@@ -264,33 +271,57 @@ body {
 .slider {
     position: absolute;
     cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    transition: .4s;
-    border-radius: 34px;
+    width: 100%;
+    height: 100%;
+    background-color: #e0e0e0;
+    transition: .3s;
+    border-radius: 20px;
+    border: 1px solid #bdbdbd;
 }
 
 .slider:before {
     position: absolute;
     content: "";
-    height: 26px;
-    width: 26px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
+    height: 14px;
+    width: 14px;
+    left: 3px;
+    bottom: 3px;
+    background-color: #ffffff;
     transition: .4s;
     border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 input:checked + .slider {
     background-color: #2196F3;
+    border-color: #1976D2;
 }
 
 input:checked + .slider:before {
-    transform: translateX(26px);
+    transform: translateX(16px);
+}
+
+/* Make icons more visible */
+.theme-toggle .la-sun,
+.theme-toggle .la-moon {
+    font-size: 20px;
+}
+
+.theme-toggle .la-sun {
+    color: #f1c40f;
+}
+
+.theme-toggle .la-moon {
+    color: #34495e;
+}
+
+/* Dark mode adjustments */
+[data-darkreader-mode="dynamic"] .theme-toggle .la-sun {
+    color: #ffd700;
+}
+
+[data-darkreader-mode="dynamic"] .theme-toggle .la-moon {
+    color: #ffffff;
 }
 
 /* ==========================================================================
@@ -302,6 +333,8 @@ input:checked + .slider:before {
     --text-primary: var(--text-primary-light);
     --text-secondary: var(--text-secondary-light);
     --border-color: var(--border-color-light);
+    --accent-color: var(--accent-color-light);
+    --header-color: var(--header-color-light);
 }
 
 :root[data-theme="dark"] {
@@ -310,6 +343,8 @@ input:checked + .slider:before {
     --text-primary: var(--text-primary-dark);
     --text-secondary: var(--text-secondary-dark);
     --border-color: var(--border-color-dark);
+    --accent-color: var(--accent-color-dark);
+    --header-color: var(--header-color-dark);
 }
 
 /* ==========================================================================

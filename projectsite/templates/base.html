@@ -42,12 +42,12 @@
 						</div>
 					</form>
 					<div class="theme-toggle d-flex align-items-center">
-						<span class="mr-2"><i class="la la-sun"></i></span>
-						<label class="theme-switch">
+						<span class="mr-2" aria-label="Light Mode"><i class="la la-sun"></i></span>
+						<label class="theme-switch" aria-label="Toggle Theme">
 							<input type="checkbox" id="theme-toggle">
 							<span class="slider"></span>
 						</label>
-						<span class="ml-2"><i class="la la-moon"></i></span>
+						<span class="ml-2" aria-label="Dark Mode"><i class="la la-moon"></i></span>
 					</div>
 					<ul class="navbar-nav topbar-nav ml-md-auto align-items-center">
 						<li class="nav-item dropdown hidden-caret">
@@ -254,10 +254,10 @@
 		document.addEventListener("DOMContentLoaded", function () {
 			{% for message in messages %}
 				const toastHTML = `
-					<div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="3000">
+					<div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-autohide="true" data-delay="3000">
 						<div class="toast-header {% if message.tags == 'success' %}bg-success text-white{% elif message.tags == 'error' %}bg-danger text-white{% endif %}">
 							<strong class="mr-auto">{{ message.tags|capfirst }}</strong>
-							<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close" onclick="this.closest('.toast').remove()">
+							<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
 								<span aria-hidden="true">&times;</span>
 							</button>
 						</div>
@@ -266,9 +266,7 @@
 						</div>
 					</div>`;
 				document.getElementById('toast-container').insertAdjacentHTML('beforeend', toastHTML);
-				const toastElement = document.getElementById('toast-container').lastElementChild;
-				const toast = new bootstrap.Toast(toastElement);
-				toast.show();
+				$('.toast').toast('show');
 			{% endfor %}
 		});
 	</script>
@@ -278,25 +276,57 @@
 	<script src="{% static 'js/core/popper.min.js' %}"></script>
 	<script src="{% static 'js/core/bootstrap.min.js' %}"></script>
 	<script src="{% static 'js/ready.min.js' %}"></script>
+	<script src="https://cdn.jsdelivr.net/npm/darkreader@4.9.58/darkreader.min.js"></script>
 	<script>
 		document.addEventListener('DOMContentLoaded', function() {
 			const toggleSwitch = document.getElementById('theme-toggle');
+			const darkReaderOptions = {
+				brightness: 100,
+				contrast: 90,
+				sepia: 10
+			};
 			
-			// Check for saved theme preference
-			const currentTheme = localStorage.getItem('theme') || 'light';
-			document.documentElement.setAttribute('data-theme', currentTheme);
-			toggleSwitch.checked = currentTheme === 'dark';
+			// Initialize dark mode based on saved preference
+			const savedTheme = localStorage.getItem('theme');
+			if (savedTheme === 'dark') {
+				toggleSwitch.checked = true;
+				DarkReader.enable(darkReaderOptions);
+			} else if (savedTheme === 'light') {
+				toggleSwitch.checked = false;
+				DarkReader.disable();
+			} else {
+				// If no saved preference, check system preference
+				if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+					toggleSwitch.checked = true;
+					DarkReader.enable(darkReaderOptions);
+					localStorage.setItem('theme', 'dark');
+				}
+			}
 
 			// Theme switch handler
 			toggleSwitch.addEventListener('change', function(e) {
 				if (e.target.checked) {
-					document.documentElement.setAttribute('data-theme', 'dark');
+					DarkReader.enable(darkReaderOptions);
 					localStorage.setItem('theme', 'dark');
 				} else {
-					document.documentElement.setAttribute('data-theme', 'light');
+					DarkReader.disable();
 					localStorage.setItem('theme', 'light');
 				}
 			});
+
+			// Listen for system theme changes
+			if (window.matchMedia) {
+				window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+					if (!localStorage.getItem('theme')) {  // Only auto-switch if user hasn't set a preference
+						toggleSwitch.checked = e.matches;
+						if (e.matches) {
+							DarkReader.enable(darkReaderOptions);
+						} else {
+							DarkReader.disable();
+						}
+					}
+				});
+			}
 		});
 	</script>
 </body>
